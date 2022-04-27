@@ -19,7 +19,9 @@ class PuppeteerPdfConverter
      * @param PdfOptions|null $pdfOptions
      * @param bool $createSignedUrl Default is true. If you want to use this feature properly, you should check if the signature is valid in the route controller.
      * @return string
-     * @throws PdfApiException
+     * @throws TimeoutException
+     * @throws ConversionException
+     * @throws UnsuccessfulHttpResponseException
      */
     public function convertRoute(string $routeName, array $routeParams = [], PdfOptions $pdfOptions = null, bool $createSignedUrl = true): string
     {
@@ -50,7 +52,9 @@ class PuppeteerPdfConverter
      * @param string $url
      * @param PdfOptions|null $pdfOptions
      * @return string
-     * @throws PdfApiException
+     * @throws TimeoutException
+     * @throws ConversionException
+     * @throws UnsuccessfulHttpResponseException
      */
     public function convertUrl(string $url, PdfOptions $pdfOptions = null): string
     {

@@ -104,14 +104,27 @@
         public function getApiPdfOptions(): array
         {
             $options = [];
-
-            $options['width'] = $this->width;
-            $options['height'] = $this->height;
-            $options['scale'] = $this->scale;
-            $options['paper_margin_top'] = $this->pageMarginTop ? $this->pageMarginTop->getApiValue() : null;
-            $options['paper_margin_bottom'] = $this->pageMarginBottom ? $this->pageMarginBottom->getApiValue() : null;
-            $options['paper_margin_left'] = $this->pageMarginLeft ? $this->pageMarginLeft->getApiValue() : null;
-            $options['paper_margin_right'] = $this->pageMarginRight ? $this->pageMarginRight->getApiValue() : null;
+            if($this->width){
+                $options['width'] = $this->width;
+            }
+            if($this->height) {
+                $options['height'] = $this->height;
+            }
+            if($this->scale) {
+                $options['scale'] = $this->scale;
+            }
+            if($this->pageMarginTop){
+                $options['paper_margin_top'] = $this->pageMarginTop->getApiValue();
+            }
+            if($this->pageMarginBottom){
+                $options['paper_margin_bottom'] = $this->pageMarginBottom->getApiValue();
+            }
+            if($this->pageMarginLeft){
+                $options['paper_margin_left'] = $this->pageMarginLeft->getApiValue();
+            }
+            if($this->pageMarginRight){
+                $options['paper_margin_right'] = $this->pageMarginRight->getApiValue();
+            }
 
             return $options;
         }
