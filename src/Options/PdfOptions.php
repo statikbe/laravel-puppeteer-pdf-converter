@@ -5,37 +5,37 @@
     class PdfOptions
     {
         /**
-         * @var int
+         * @var int|null
          */
         private $width;
 
         /**
-         * @var int
+         * @var int|null
          */
         private $height;
 
         /**
-         * @var float
+         * @var float|null
          */
         private $scale;
 
         /**
-         * @var PdfPageMargin
+         * @var PdfPageMargin|null
          */
         private $pageMarginTop;
 
         /**
-         * @var PdfPageMargin
+         * @var PdfPageMargin|null
          */
         private $pageMarginBottom;
 
         /**
-         * @var PdfPageMargin
+         * @var PdfPageMargin|null
          */
         private $pageMarginLeft;
 
         /**
-         * @var PdfPageMargin
+         * @var PdfPageMargin|null
          */
         private $pageMarginRight;
 
