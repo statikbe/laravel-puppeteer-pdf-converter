@@ -18,7 +18,7 @@ composer require statikbe/laravel-puppeteer-pdf-converter
 You can publish the config file with:
 
 ```bash
-php artisan vendor:publish --tag="laravel-puppeteer-pdf-converter-config"
+php artisan vendor:publish --tag="puppeteer-pdf-converter-config"
 ```
 
 This is the contents of the published config file:
