@@ -2,12 +2,10 @@
 
 namespace Statikbe\PuppeteerPdfConverter;
 
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
-use Statikbe\PuppeteerPdfConverter\Exceptions\PdfApiException;
 use Statikbe\PuppeteerPdfConverter\Exceptions\ConversionException;
+use Statikbe\PuppeteerPdfConverter\Exceptions\PdfApiException;
 use Statikbe\PuppeteerPdfConverter\Exceptions\TimeoutException;
 use Statikbe\PuppeteerPdfConverter\Exceptions\UnsuccessfulHttpResponseException;
 use Statikbe\PuppeteerPdfConverter\Options\PdfOptions;
@@ -23,23 +21,23 @@ class PuppeteerPdfConverter
      * @return string
      * @throws PdfApiException
      */
-    public function convertRoute(string $routeName, array $routeParams=[], PdfOptions $pdfOptions=null, bool $createSignedUrl=true): string {
+    public function convertRoute(string $routeName, array $routeParams = [], PdfOptions $pdfOptions = null, bool $createSignedUrl = true): string
+    {
         //get url to html pdf view to send to pdf conversion API:
-        if($createSignedUrl){
+        if ($createSignedUrl) {
             $websiteUrl = URL::temporarySignedRoute(
                 $routeName,
                 now()->addMinutes(config('puppeteer-pdf-converter.temporary_signed_route_ttl')),
                 $routeParams
             );
-        }
-        else{
+        } else {
             $websiteUrl = URL::route(
                 $routeName,
                 $routeParams
             );
         }
 
-        if(config('app.env') == 'local' && config('puppeteer-pdf-converter.ngrok_app_url')){
+        if (config('app.env') == 'local' && config('puppeteer-pdf-converter.ngrok_app_url')) {
             $path = parse_url($websiteUrl, PHP_URL_PATH) . '?' . parse_url($websiteUrl, PHP_URL_QUERY);
             $websiteUrl = config('puppeteer-pdf-converter.ngrok_app_url') . $path;
         }
@@ -54,8 +52,9 @@ class PuppeteerPdfConverter
      * @return string
      * @throws PdfApiException
      */
-    public function convertUrl(string $url, PdfOptions $pdfOptions=null): string {
-        if(!$pdfOptions){
+    public function convertUrl(string $url, PdfOptions $pdfOptions = null): string
+    {
+        if (! $pdfOptions) {
             //load from config if no options are provided:
             $pdfOptions = new PdfOptions();
         }
@@ -69,7 +68,7 @@ class PuppeteerPdfConverter
         $response = Http::get($pdfConversionApiUrl);
 
         //if the request is successful return the url to the PDF.
-        if($response->successful()){
+        if ($response->successful()) {
             return $response->json('url');
         }
         //else an error occurred and we throw an exception
@@ -81,7 +80,8 @@ class PuppeteerPdfConverter
      * signed urls need to be validated. If we change the url with the Ngrok url, the signature will no longer be valid.
      * @return bool
      */
-    public function isLocalTunnelConfigured(): bool {
+    public function isLocalTunnelConfigured(): bool
+    {
         return (config('puppeteer-pdf-converter.ngrok_app_url', null) && config('app.env') === 'local');
     }
 
@@ -90,15 +90,14 @@ class PuppeteerPdfConverter
      * @param \Illuminate\Http\Client\Response $response
      * @return PdfApiException
      */
-    private function createApiException(\Illuminate\Http\Client\Response $response): PdfApiException {
+    private function createApiException(\Illuminate\Http\Client\Response $response): PdfApiException
+    {
         $errorType = $response->json('type');
-        if($errorType === UnsuccessfulHttpResponseException::API_ERROR_TYPE){
+        if ($errorType === UnsuccessfulHttpResponseException::API_ERROR_TYPE) {
             return (new UnsuccessfulHttpResponseException())->setApiError($response->json());
-        }
-        else if($errorType === TimeoutException::API_ERROR_TYPE){
+        } elseif ($errorType === TimeoutException::API_ERROR_TYPE) {
             return (new TimeoutException())->setApiError($response->json());
-        }
-        else{
+        } else {
             //fallback to conversion error:
             return (new ConversionException())->setApiError($response->json());
         }
