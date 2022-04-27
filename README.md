@@ -148,7 +148,7 @@ to expose your local web server. Examples of such tunneling software is [Ngrok](
 
 If you use Ngrok, you can start the service (replace `APP_URL` with the value of the `APP_URL` key in your `.env` file):
 
-```
+```bash
 ngrok http -host-header=APP_URL 80
 ```
 
