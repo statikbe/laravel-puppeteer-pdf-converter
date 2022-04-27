@@ -1,78 +1,172 @@
+# Laravel Puppeteer PDF Converter
 
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/support-ukraine.svg?t=1" />](https://supportukrainenow.org)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/statikbe/laravel-puppeteer-pdf-converter.svg?style=flat-square)](https://packagist.org/packages/statikbe/laravel-puppeteer-pdf-converter)
+[![Total Downloads](https://img.shields.io/packagist/dt/statikbe/laravel-puppeteer-pdf-converter.svg?style=flat-square)](https://packagist.org/packages/statikbe/laravel-puppeteer-pdf-converter)
 
-# :package_description
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/:vendor_slug/:package_slug/run-tests?label=tests)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/:vendor_slug/:package_slug/Check%20&%20fix%20styling?label=code%20style)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-<!--delete-->
----
-This repo can be used to scaffold a Laravel package. Follow these steps to get started:
-
-1. Press the "Use template" button at the top of this repo to create a new repo with the contents of this skeleton.
-2. Run "php ./configure.php" to run a script that will replace all placeholders throughout all the files.
-3. Have fun creating your package.
-4. If you need help creating a package, consider picking up our <a href="https://laravelpackage.training">Laravel Package Training</a> video course.
----
-<!--/delete-->
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
-
-## Support us
-
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/:package_name.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/:package_name)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+This is a convenience wrapper for a service that converts an HTML page to PDF. The service uses [Puppeteer.js](https://pptr.dev/) 
+and is developed in-house at [Statik](https://www.statik.be). The code for the service is not yet open-sourced, but can be shared upon request.
 
 ## Installation
 
 You can install the package via composer:
 
 ```bash
-composer require :vendor_slug/:package_slug
-```
-
-You can publish and run the migrations with:
-
-```bash
-php artisan vendor:publish --tag=":package_slug-migrations"
-php artisan migrate
+composer require statikbe/laravel-puppeteer-pdf-converter
 ```
 
 You can publish the config file with:
 
 ```bash
-php artisan vendor:publish --tag=":package_slug-config"
+php artisan vendor:publish --tag="laravel-puppeteer-pdf-converter-config"
 ```
 
 This is the contents of the published config file:
 
 ```php
+<?php
+
 return [
+    /*
+     * The URL to the AWS Lambda API to convert HTML to PDF with Puppeteer.
+     */
+    'pdf_conversion_api' => env('PDF_CONVERSION_API'),
+
+    /*
+     * If the url is generated from a route name, a signed URL is created with a time-to-live (TTL). This is useful
+     * when sensitive data is available on the URL, so it can only be accessed from a signed url.
+     * Note: you need to check if the signature is valid in the controller of the route.
+     */
+    'temporary_signed_route_ttl' => 10,     // in minutes
+
+    /*
+     * If you develop with this library locally, you can setup NGROK or some other tunneling service to make your local
+     * computer publicly avaialable for the PDF service, so you can test the PDF conversion while developing.
+     */
+    'ngrok_app_url' => env('NGROK_APP_URL'),
+
+    /*
+     * The paper width of the PDF (defaults to A4) (see Puppeteer docs for details, https://pptr.dev/#?product=Puppeteer&version=v10.4.0&show=api-pagepdfoptions)
+     */
+    'pdf_width' => null,
+
+    /*
+     * The paper height of the PDF (defaults to A4) (see Puppeteer docs for details, https://pptr.dev/#?product=Puppeteer&version=v10.4.0&show=api-pagepdfoptions)
+     */
+    'pdf_height' => null,
+
+    /*
+     * The scale of the web page rendering, allows to zoom in or out of the page (defaults to 1, must be between 0.1 and 2)
+     */
+    'pdf_scale' => 1,
+
+    /*
+     * The paper top margin (provide units in "px" or "cm", e.g. "40px")
+     */
+    'paper_margin_top' => null,
+
+    /*
+     * The paper bottom margin (provide units in "px" or "cm", e.g. "40px")
+     */
+    'paper_margin_bottom' => null,
+
+    /*
+     * The paper left margin (provide units in "px" or "cm", e.g. "40px")
+     */
+    'paper_margin_left' => null,
+
+    /*
+     * The paper right margin (provide units in "px" or "cm", e.g. "40px")
+     */
+    'paper_margin_right' => null,
 ];
 ```
 
-Optionally, you can publish the views using
+## Configuration
 
-```bash
-php artisan vendor:publish --tag=":package_slug-views"
-```
+**Required:** You need to set the url to the API in the `.env` with key `PDF_CONVERSION_API`.
+
+**Optional:** The other configuration is optional. You can set default Puppeteer configuration, such as paper margins, scaling and paper width and height.
+The paper width and height defaults to A4.
+More information on possible Puppeteer configuration is available in [the Puppeteer docs](https://pptr.dev/#?product=Puppeteer&version=v10.4.0&show=api-pagepdfoptions).
+
+You can also manually set the PDF configuration when you create the PDF, see below. However, it is important to note that the 
+default configuration set in the config file, is always taken as the basis and is overridden by the manual options in code.
+If a value is set to `null` in the config file or manual options, the option will not be send to the service 
+(i.e. the option is disabled).   
 
 ## Usage
 
+The library allows to convert an HTML page to a PDF for a route name (use `convertRoute()`) or for a URL (use `convertUrl()`).
+
+If you want to override the PDF options that are set in the configuration file, you can create a `PdfOptions` object. 
+
 ```php
-$variable = new VendorName\Skeleton();
-echo $variable->echoPhrase('Hello, VendorName!');
+//set options and get pdf from conversion API
+try {
+    $pdfOptions = new PdfOptions();
+    $pdfOptions->setScale(0.6)
+        ->setPageMargins(new PdfPageMargin(40, PdfPageMargin::MARGIN_IN_PIXELS));
+    $pdfUrl = PuppeteerPdfConverter::convertRoute('report_index', ['organisation' => $organisation], $pdfOptions);
+    return redirect($pdfUrl);
+}
+catch(PdfApiException $exception){
+    Log::error(sprintf('PDF report could not be created: %s (for organisation: %s)', $exception->getMessage(), $organisation));
+    return view('pdf_error', ['error' => $exception->getMessage()]);
+}
 ```
 
-## Testing
+The following exceptions can occur:
 
-```bash
-composer test
+- `TimeoutException`: 
+    Since the PDF conversion service runs on AWS Lambda, it can take timeout due to cold-start issues. 
+    If 20 seconds pass, this exception will be thrown. You can use this exception to implement a retry mechanism.
+- `UnsuccessfulHttpResponseException`:
+    When the given URL returns an HTTP status that is not successful (within the range of 200), this exception is thrown
+    to avoid that error pages are rendered in the PDF.
+- `ConversionException`: 
+    If an internal error occurs on the service or in the Puppeteer library, this exception is returned.
+- `PdfApiException`:
+    This exception is the super class of all above exceptions, and can thus be used to catch all of the above exceptions 
+    in one catch clause (as shown in the example). 
+- `InvalidMarginUnitException`:
+    This exception is thrown if the unit of the margins is something else than px or cm.   
+
+### Temporary URLs
+
+The library can generate temporary signed URLs. This is handy if you need to generate PDFs from routes that require authorisation. 
+The PDF service cannot login to your application. But by using temporarily signed URLs, we can validate that the application 
+has generated the URL and no one has tempered with it.
+
+You need to check in the controller of the HTML page whether the signature of the URL is valid. 
+See section *Local development* for an example.
+
+## Local development
+
+The PDF conversion service runs in the cloud. For local development, you can run it locally or use a tunneling service
+to expose your local web server. Examples of such tunneling software is [Ngrok](https://ngrok.com/) or [Expose](https://expose.dev/).
+
+If you use Ngrok, you can start the service (replace `APP_URL` with the value of the `APP_URL` key in your `.env` file):
+
 ```
+ngrok http -host-header=APP_URL 80
+```
+
+You can then configure the tunneled URL in the `.env` file with key `NGROK_APP_URL`. For example:
+
+```
+NGROK_APP_URL=http://dba0-94-224-113-240.ngrok.io
+```
+
+In case you use temporary signed URLs, there is a convenience function to check if a local tunnel is configured 
+(i.e. whether the `NGROK_APP_URL` is set and the environment is set to `local`). 
+
+```php
+PuppeteerPdfConverter::isLocalTunnelConfigured();
+```
+
+This can be used to bypass the valid signature check in your controller. Because the `NGROK_APP_URL` will be replaced 
+in the generated URL, the signature will not be valid, hence we need to bypass the `$request->hasValidSignature()` check.
 
 ## Changelog
 
@@ -80,15 +174,11 @@ Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed re
 
 ## Contributing
 
-Please see [CONTRIBUTING](https://github.com/spatie/.github/blob/main/CONTRIBUTING.md) for details.
-
-## Security Vulnerabilities
-
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
+You can use the Github issue tracker and pull requests are welcome!
 
 ## Credits
 
-- [:author_name](https://github.com/:author_username)
+- [sten](https://github.com/sten)
 - [All Contributors](../../contributors)
 
 ## License
