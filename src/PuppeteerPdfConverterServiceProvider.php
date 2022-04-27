@@ -4,7 +4,6 @@ namespace Statikbe\PuppeteerPdfConverter;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use VendorName\Skeleton\Commands\SkeletonCommand;
 
 class PuppeteerPdfConverterServiceProvider extends PackageServiceProvider
 {
