@@ -144,7 +144,12 @@ See section *Local development* for an example.
 ## Local development
 
 The PDF conversion service runs in the cloud. For local development, you can run it locally or use a tunneling service
-to expose your local web server. Examples of such tunneling software is [Ngrok](https://ngrok.com/) or [Expose](https://expose.dev/).
+to expose your local web server. Examples of such tunneling software is [Ngrok](https://ngrok.com/) or [Expose](https://expose.dev/). 
+Or if you use [Valet](https://laravel.com/docs/9.x/valet), there is a [sharing command](https://laravel.com/docs/9.x/valet#sharing-sites)
+
+```bash
+valet share
+```
 
 If you use Ngrok, you can start the service (replace `APP_URL` with the value of the `APP_URL` key in your `.env` file):
 
@@ -152,7 +157,8 @@ If you use Ngrok, you can start the service (replace `APP_URL` with the value of
 ngrok http -host-header=APP_URL 80
 ```
 
-You can then configure the tunneled URL in the `.env` file with key `NGROK_APP_URL`. For example:
+You can then configure the tunneled URL in the `.env` file with key `NGROK_APP_URL`. You can also set URLs of Valet or Expose 
+in this variable. For example:
 
 ```
 NGROK_APP_URL=http://dba0-94-224-113-240.ngrok.io
