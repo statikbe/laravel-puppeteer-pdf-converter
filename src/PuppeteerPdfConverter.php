@@ -4,6 +4,7 @@ namespace Statikbe\PuppeteerPdfConverter;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
+use Statikbe\PuppeteerPdfConverter\Exceptions\ConfigurationException;
 use Statikbe\PuppeteerPdfConverter\Exceptions\ConversionException;
 use Statikbe\PuppeteerPdfConverter\Exceptions\PdfApiException;
 use Statikbe\PuppeteerPdfConverter\Exceptions\TimeoutException;
@@ -53,8 +54,7 @@ class PuppeteerPdfConverter
      * @param PdfOptions|null $pdfOptions
      * @return string
      * @throws TimeoutException
-     * @throws ConversionException
-     * @throws UnsuccessfulHttpResponseException
+     * @throws ConversionException|ConfigurationException|PdfApiException
      */
     public function convertUrl(string $url, PdfOptions $pdfOptions = null): string
     {
@@ -65,6 +65,10 @@ class PuppeteerPdfConverter
 
         // prepare API call:
         $pdfConversionApiUrl = config('puppeteer-pdf-converter.pdf_conversion_api');
+        if(!$pdfConversionApiUrl){
+            throw ConfigurationException::create('pdf_conversion_api');
+        }
+
         $queryStringArgs = $pdfOptions->getApiPdfOptions();
         $queryStringArgs['url'] = $url;
         $pdfConversionApiUrl .= '?' . http_build_query($queryStringArgs);
