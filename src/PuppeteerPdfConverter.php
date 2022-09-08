@@ -65,7 +65,7 @@ class PuppeteerPdfConverter
 
         // prepare API call:
         $pdfConversionApiUrl = config('puppeteer-pdf-converter.pdf_conversion_api');
-        if(!$pdfConversionApiUrl){
+        if (! $pdfConversionApiUrl) {
             throw ConfigurationException::create('pdf_conversion_api');
         }
 
