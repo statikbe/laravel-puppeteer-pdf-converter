@@ -25,11 +25,13 @@ class PuppeteerPdfConverter
      * @throws ConversionException
      * @throws UnsuccessfulHttpResponseException
      */
-    public function convertRoute(string $routeName,
-                                 array $routeParams = [],
-                                 string $fileName = null,
-                                 PdfOptions $pdfOptions = null,
-                                 bool $createSignedUrl = true): string
+    public function convertRoute(
+        string $routeName,
+        array $routeParams = [],
+        string $fileName = null,
+        PdfOptions $pdfOptions = null,
+        bool $createSignedUrl = true
+    ): string
     {
         //get url to html pdf view to send to pdf conversion API:
         if ($createSignedUrl) {
@@ -62,9 +64,11 @@ class PuppeteerPdfConverter
      * @throws TimeoutException
      * @throws ConversionException|ConfigurationException|PdfApiException
      */
-    public function convertUrl(string $url,
-                               string $fileName = null,
-                               PdfOptions $pdfOptions = null): string
+    public function convertUrl(
+        string $url,
+        string $fileName = null,
+        PdfOptions $pdfOptions = null
+    ): string
     {
         if (! $pdfOptions) {
             //load from config if no options are provided:
@@ -79,7 +83,7 @@ class PuppeteerPdfConverter
 
         $queryStringArgs = $pdfOptions->getApiPdfOptions();
         $queryStringArgs['url'] = $url;
-        if($fileName){
+        if ($fileName) {
             $queryStringArgs['fileName'] = $fileName;
         }
         $pdfConversionApiUrl .= '?' . http_build_query($queryStringArgs);

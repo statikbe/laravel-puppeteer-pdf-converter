@@ -8,6 +8,7 @@
      * @package Statikbe\PuppeteerPdfConverter\Exceptions
      */
 
+
     class ConversionException extends PdfApiException
     {
         public const API_ERROR_TYPE = 'CONVERSION_ERROR';

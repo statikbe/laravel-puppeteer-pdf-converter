@@ -2,7 +2,7 @@
 
     namespace Statikbe\PuppeteerPdfConverter\Options;
 
-    class  PdfOptions
+    class PdfOptions
     {
         /**
          * @var int|null

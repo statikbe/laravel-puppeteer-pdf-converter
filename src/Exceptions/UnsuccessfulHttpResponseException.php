@@ -10,6 +10,7 @@
      * @package Statikbe\PuppeteerPdfConverter\Exceptions
      */
 
+
     class UnsuccessfulHttpResponseException extends PdfApiException
     {
         public const API_ERROR_TYPE = 'UNSUCCESSFUL_HTTP_RESPONSE';
