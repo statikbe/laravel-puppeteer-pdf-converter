@@ -107,7 +107,7 @@ try {
     $pdfOptions = new PdfOptions();
     $pdfOptions->setScale(0.6)
         ->setPageMargins(new PdfPageMargin(40, PdfPageMargin::MARGIN_IN_PIXELS));
-    $pdfUrl = PuppeteerPdfConverter::convertRoute('report_index', ['organisation' => $organisation], $pdfOptions);
+    $pdfUrl = PuppeteerPdfConverter::convertRoute('report_index', ['organisation' => $organisation], 'report.pdf', $pdfOptions);
     return redirect($pdfUrl);
 }
 catch(PdfApiException $exception){

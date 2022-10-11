@@ -17,6 +17,7 @@ class PuppeteerPdfConverter
      * Convert the webpage of the provided route name and route parameters to a PDF using the Puppeteer PDF API.
      * @param string $routeName
      * @param array $routeParams
+     * @param string|null $fileName
      * @param PdfOptions|null $pdfOptions
      * @param bool $createSignedUrl Default is true. If you want to use this feature properly, you should check if the signature is valid in the route controller.
      * @return string
@@ -24,7 +25,11 @@ class PuppeteerPdfConverter
      * @throws ConversionException
      * @throws UnsuccessfulHttpResponseException
      */
-    public function convertRoute(string $routeName, array $routeParams = [], PdfOptions $pdfOptions = null, bool $createSignedUrl = true): string
+    public function convertRoute(string $routeName,
+                                 array $routeParams = [],
+                                 string $fileName = null,
+                                 PdfOptions $pdfOptions = null,
+                                 bool $createSignedUrl = true): string
     {
         //get url to html pdf view to send to pdf conversion API:
         if ($createSignedUrl) {
@@ -45,18 +50,21 @@ class PuppeteerPdfConverter
             $websiteUrl = config('puppeteer-pdf-converter.ngrok_app_url') . $path;
         }
 
-        return $this->convertUrl($websiteUrl);
+        return $this->convertUrl($websiteUrl, $fileName, $pdfOptions);
     }
 
     /**
      * Convert the webpage of the provided URL to a PDF using the Puppeteer PDF API.
      * @param string $url
+     * @param string|null $fileName
      * @param PdfOptions|null $pdfOptions
      * @return string
      * @throws TimeoutException
      * @throws ConversionException|ConfigurationException|PdfApiException
      */
-    public function convertUrl(string $url, PdfOptions $pdfOptions = null): string
+    public function convertUrl(string $url,
+                               string $fileName = null,
+                               PdfOptions $pdfOptions = null): string
     {
         if (! $pdfOptions) {
             //load from config if no options are provided:
@@ -71,6 +79,9 @@ class PuppeteerPdfConverter
 
         $queryStringArgs = $pdfOptions->getApiPdfOptions();
         $queryStringArgs['url'] = $url;
+        if($fileName){
+            $queryStringArgs['fileName'] = $fileName;
+        }
         $pdfConversionApiUrl .= '?' . http_build_query($queryStringArgs);
 
         $response = Http::get($pdfConversionApiUrl);
