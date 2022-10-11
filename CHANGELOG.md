@@ -2,6 +2,12 @@
 
 All notable changes to `statikbe/laravel-puppeteer-pdf-converter` will be documented in this file.
 
+## v1.1.0 - 2022-10-11
+
+- Fix bug in convertRoute to pass PdfOptions
+- Add fileName support to set a custom file name for the generated pdf
+- IMPORTANT: the convertUrl and convertRoute functions have changed.
+
 ## v1.0.2 - 2022-09-08
 
 - Configuration exception added for missing config
