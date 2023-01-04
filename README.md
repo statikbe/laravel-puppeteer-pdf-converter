@@ -1,8 +1,9 @@
+<p align="center"><img src="documentation/img/banner-laravel-puppeteer-pdf-converter.png" alt="Laravel Puppeteer PDF Converter"></p>
+
 # Laravel Puppeteer PDF Converter
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/statikbe/laravel-puppeteer-pdf-converter.svg?style=flat-square)](https://packagist.org/packages/statikbe/laravel-puppeteer-pdf-converter)
 [![Total Downloads](https://img.shields.io/packagist/dt/statikbe/laravel-puppeteer-pdf-converter.svg?style=flat-square)](https://packagist.org/packages/statikbe/laravel-puppeteer-pdf-converter)
-
 
 This is a convenience wrapper for a service that converts an HTML page to PDF. The service uses [Puppeteer.js](https://pptr.dev/) 
 and is developed in-house at [Statik](https://www.statik.be). The code for the service is not yet open-sourced, but can be shared upon request.
