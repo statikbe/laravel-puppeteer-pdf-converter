@@ -31,8 +31,7 @@ class PuppeteerPdfConverter
         string $fileName = null,
         PdfOptions $pdfOptions = null,
         bool $createSignedUrl = true
-    ): string
-    {
+    ): string {
         //get url to html pdf view to send to pdf conversion API:
         if ($createSignedUrl) {
             $websiteUrl = URL::temporarySignedRoute(
@@ -68,8 +67,7 @@ class PuppeteerPdfConverter
         string $url,
         string $fileName = null,
         PdfOptions $pdfOptions = null
-    ): string
-    {
+    ): string {
         if (! $pdfOptions) {
             //load from config if no options are provided:
             $pdfOptions = new PdfOptions();
