@@ -92,6 +92,7 @@ class PuppeteerPdfConverter
         if ($response->successful()) {
             return $response->json('url');
         }
+
         //else an error occurred and we throw an exception
         throw $this->createApiException($response);
     }
