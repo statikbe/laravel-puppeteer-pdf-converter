@@ -2,6 +2,10 @@
 
 All notable changes to `statikbe/laravel-puppeteer-pdf-converter` will be documented in this file.
 
+## v1.2.0 - 2023-04-05
+
+Laravel 10 support
+
 ## v1.1.0 - 2022-10-11
 
 - Fix bug in convertRoute to pass PdfOptions

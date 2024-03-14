@@ -1,7 +1,7 @@
 <?php
 
-    namespace Statikbe\PuppeteerPdfConverter\Exceptions;
+namespace Statikbe\PuppeteerPdfConverter\Exceptions;
 
-    class InvalidMarginUnitException extends \Exception
-    {
-    }
+class InvalidMarginUnitException extends \Exception
+{
+}
