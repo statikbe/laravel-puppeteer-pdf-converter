@@ -2,13 +2,13 @@
 
 namespace Statikbe\PuppeteerPdfConverter;
 
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\StreamWrapper;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Statikbe\PuppeteerPdfConverter\Enum\MergerOutput;
-use GuzzleHttp\Psr7\StreamWrapper;
-use GuzzleHttp\Exception\RequestException;
-use Illuminate\Http\Response;
 use Statikbe\PuppeteerPdfConverter\Exceptions\PdfApiException;
 
 /**
@@ -40,7 +40,7 @@ class PdfMerger
     {
         $body = [
             'fileBinaries' => collect($filePaths)
-                ->map(fn($filePath) => base64_encode(file_get_contents($filePath)))
+                ->map(fn ($filePath) => base64_encode(file_get_contents($filePath)))
                 ->toArray(),
         ];
         $this->addOutputToBody($body, $outputFormat, $outputFileName);
@@ -54,7 +54,7 @@ class PdfMerger
             'variant' => $outputFormat->value,
         ];
 
-        if($outputFileName && $outputFormat === MergerOutput::URL){
+        if ($outputFileName && $outputFormat === MergerOutput::URL) {
             $body['output']['fileName'] = $outputFileName;
         }
     }
@@ -67,7 +67,7 @@ class PdfMerger
         try {
             $response = Http::withHeaders([
                     'Content-Type' => 'application/json',
-                    'x-api-key' => $apiKey
+                    'x-api-key' => $apiKey,
                 ])
                 ->post($url, $body);
 
@@ -79,6 +79,7 @@ class PdfMerger
                     $resource = fopen('php://temp', 'r+');
                     fwrite($resource, base64_decode((string)$response->getBody()));
                     rewind($resource);
+
                     return new Response(StreamWrapper::getResource($resource), 200, ['Content-Type' => 'application/pdf']);
             }
         } catch (RequestException $e) {
@@ -88,10 +89,12 @@ class PdfMerger
                     $error = json_decode($response->getBody(), true);
                     // Log error details for debugging
                     Log::error($error);
+
                     // Throw exception with error details
                     throw new PdfApiException('Error from AWS Lambda: ' . $error['title']);
                 }
             }
+
             // Rethrow the original exception if the response doesn't have the error details we need
             throw $e;
         }
