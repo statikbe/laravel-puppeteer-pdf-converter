@@ -23,65 +23,7 @@ php artisan vendor:publish --tag="puppeteer-pdf-converter-config"
 ```
 
 This is the contents of the published config file:
-
-```php
-<?php
-
-return [
-    /*
-     * The URL to the AWS Lambda API to convert HTML to PDF with Puppeteer.
-     */
-    'pdf_conversion_api' => env('PDF_CONVERSION_API'),
-
-    /*
-     * If the url is generated from a route name, a signed URL is created with a time-to-live (TTL). This is useful
-     * when sensitive data is available on the URL, so it can only be accessed from a signed url.
-     * Note: you need to check if the signature is valid in the controller of the route.
-     */
-    'temporary_signed_route_ttl' => 10,     // in minutes
-
-    /*
-     * If you develop with this library locally, you can setup NGROK or some other tunneling service to make your local
-     * computer publicly avaialable for the PDF service, so you can test the PDF conversion while developing.
-     */
-    'ngrok_app_url' => env('NGROK_APP_URL'),
-
-    /*
-     * The paper width of the PDF (defaults to A4) (see Puppeteer docs for details, https://pptr.dev/#?product=Puppeteer&version=v10.4.0&show=api-pagepdfoptions)
-     */
-    'pdf_width' => null,
-
-    /*
-     * The paper height of the PDF (defaults to A4) (see Puppeteer docs for details, https://pptr.dev/#?product=Puppeteer&version=v10.4.0&show=api-pagepdfoptions)
-     */
-    'pdf_height' => null,
-
-    /*
-     * The scale of the web page rendering, allows to zoom in or out of the page (defaults to 1, must be between 0.1 and 2)
-     */
-    'pdf_scale' => 1,
-
-    /*
-     * The paper top margin (provide units in "px" or "cm", e.g. "40px")
-     */
-    'paper_margin_top' => null,
-
-    /*
-     * The paper bottom margin (provide units in "px" or "cm", e.g. "40px")
-     */
-    'paper_margin_bottom' => null,
-
-    /*
-     * The paper left margin (provide units in "px" or "cm", e.g. "40px")
-     */
-    'paper_margin_left' => null,
-
-    /*
-     * The paper right margin (provide units in "px" or "cm", e.g. "40px")
-     */
-    'paper_margin_right' => null,
-];
-```
+[puppeteer-pdf-converter.php](config%2Fpuppeteer-pdf-converter.php)
 
 ## Configuration
 
@@ -96,7 +38,13 @@ default configuration set in the config file, is always taken as the basis and i
 If a value is set to `null` in the config file or manual options, the option will not be send to the service 
 (i.e. the option is disabled).   
 
+### Merge API
+
+**Required:** You need to set the url to the API in the `.env` with key `PDF_MERGER_API` and an API key in `PDF_MERGER_API_KEY`.
+
 ## Usage
+
+### Conversion API:
 
 The library allows to convert an HTML page to a PDF for a route name (use `convertRoute()`) or for a URL (use `convertUrl()`).
 
@@ -133,7 +81,7 @@ The following exceptions can occur:
 - `InvalidMarginUnitException`:
     This exception is thrown if the unit of the margins is something else than px or cm.   
 
-### Temporary URLs
+#### Temporary URLs
 
 The library can generate temporary signed URLs. This is handy if you need to generate PDFs from routes that require authorisation. 
 The PDF service cannot login to your application. But by using temporarily signed URLs, we can validate that the application 
@@ -141,6 +89,43 @@ has generated the URL and no one has tempered with it.
 
 You need to check in the controller of the HTML page whether the signature of the URL is valid. 
 See section *Local development* for an example.
+
+### Merger API
+
+With the `PdfMerger` class you can merge multiple PDFs into one while maintaining the PDF layers (including links and annotations). 
+This class provides two public functions to merge either URLs pointing to PDFs, or binary base64 strings representing PDFs, into one single PDF.
+The `mergePdfUrls` method requires an array of links to existing PDFs that you would like to merge, and optionally 
+the output format of the final document along with its filename. You can output a url to the PDF file, stored in an S3 bucket,
+or receive the binary stream of the file.
+
+Here is a simple example of how to use mergePdfUrls method:
+
+```php 
+$merger = new \Statikbe\PuppeteerPdfConverter\PdfMerger();
+$urls = ['http://example.com/first.pdf', 'http://example.com/second.pdf'];
+$mergedPdfUrl = $merger->mergePdfUrls($urls, 
+    \Statikbe\PuppeteerPdfConverter\Enum\MergerOutput::URL, 
+    'merged_file.pdf');
+```
+
+In this case, `$mergedPdfUrl` will hold the URL to the resulting PDF called 'merged_file.pdf'.
+
+`mergePdfFiles` method works similarly, but it takes an array of local file paths to the PDF documents you want to merge:
+
+```php
+$merger = new \Statikbe\PuppeteerPdfConverter\PdfMerger();
+$files = ['/path/to/first.pdf', '/path/to/second.pdf'];
+$response = $merger->mergePdfFiles($files, \Statikbe\PuppeteerPdfConverter\Enum\MergerOutput::BASE64);
+```
+
+In this case, `$response` will contain a binary stream of the merged PDFs ready to be saved or sent over the network.
+
+This functionality can be used with an optional `MergerOutput` parameter to determine the format of the result. 
+By default, this parameter is set to output a URL. Alternatively, you can set `MergerOutput::BASE64` to retrieve 
+the merged result as a Base64-encoded string.
+
+Remember to always include appropriate exception handling when using these methods as they may throw 
+a `PdfApiException` if the AWS Lambda function encounters an error.
 
 ## Local development
 

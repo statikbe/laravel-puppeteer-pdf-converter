@@ -53,4 +53,14 @@ return [
      * The paper right margin (provide units in "px" or "cm", e.g. "40px")
      */
     'paper_margin_right' => null,
+
+    /*
+     * The URL to the AWS Lambda API to merge multiple PDFs to one PDF.
+     */
+    'pdf_merger_api' => env('PDF_MERGER_API'),
+
+    /*
+     * The API key for the AWS Lambda API to merge multiple PDFs to one PDF.
+     */
+    'pdf_merger_api_key' => env('PDF_MERGER_API_KEY'),
 ];
