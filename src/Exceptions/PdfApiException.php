@@ -9,7 +9,7 @@ class PdfApiException extends \Exception
 {
     public static function create(array $apiErrorFields): self
     {
-        return (new self)->setApiError($apiErrorFields);
+        return (new self())->setApiError($apiErrorFields);
     }
 
     public function setApiError(array $apiErrorFields): self

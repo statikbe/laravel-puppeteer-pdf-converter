@@ -17,7 +17,7 @@ class PdfMergerTest extends TestCase
             '*' => Http::response(['url' => 'http://fake-url.com/merged.pdf'], 200),
         ]);
 
-        $pdfMerger = new PdfMerger;
+        $pdfMerger = new PdfMerger();
 
         $urls = [
             'http://fake-url.com/pdf1.pdf',

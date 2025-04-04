@@ -64,7 +64,7 @@ class PuppeteerPdfConverter
     ): string {
         if (! $pdfOptions) {
             // load from config if no options are provided:
-            $pdfOptions = new PdfOptions;
+            $pdfOptions = new PdfOptions();
         }
 
         // prepare API call:
@@ -107,12 +107,12 @@ class PuppeteerPdfConverter
     {
         $errorType = $response->json('type');
         if ($errorType === UnsuccessfulHttpResponseException::API_ERROR_TYPE) {
-            return (new UnsuccessfulHttpResponseException)->setApiError($response->json());
+            return (new UnsuccessfulHttpResponseException())->setApiError($response->json());
         } elseif ($errorType === TimeoutException::API_ERROR_TYPE) {
-            return (new TimeoutException)->setApiError($response->json());
+            return (new TimeoutException())->setApiError($response->json());
         } else {
             // fallback to conversion error:
-            return (new ConversionException)->setApiError($response->json());
+            return (new ConversionException())->setApiError($response->json());
         }
     }
 }
