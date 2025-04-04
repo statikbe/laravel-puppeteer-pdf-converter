@@ -1,6 +1,6 @@
 <p align="center"><img src="documentation/img/banner-laravel-puppeteer-pdf-converter.png" alt="Laravel Puppeteer PDF Converter"></p>
 
-# Laravel Puppeteer PDF Converter
+# Laravel Puppeteer PDF Converter & Merger
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/statikbe/laravel-puppeteer-pdf-converter.svg?style=flat-square)](https://packagist.org/packages/statikbe/laravel-puppeteer-pdf-converter)
 [![Total Downloads](https://img.shields.io/packagist/dt/statikbe/laravel-puppeteer-pdf-converter.svg?style=flat-square)](https://packagist.org/packages/statikbe/laravel-puppeteer-pdf-converter)
