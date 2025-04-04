@@ -4,8 +4,6 @@ namespace Statikbe\PuppeteerPdfConverter\Exceptions;
 
 /**
  * Thrown when the input values or its structure to the AWS Lambda is not valid.
- *
- * @package Statikbe\PuppeteerPdfConverter\Exceptions
  */
 class InputValidationException extends PdfApiException
 {

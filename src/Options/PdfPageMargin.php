@@ -7,6 +7,7 @@ use Statikbe\PuppeteerPdfConverter\Exceptions\InvalidMarginUnitException;
 class PdfPageMargin
 {
     public const MARGIN_IN_CM = 'cm';
+
     public const MARGIN_IN_PIXELS = 'px';
 
     /**
@@ -31,6 +32,6 @@ class PdfPageMargin
 
     public function getApiValue(): string
     {
-        return $this->margin . $this->unit;
+        return $this->margin.$this->unit;
     }
 }

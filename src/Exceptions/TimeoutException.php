@@ -5,7 +5,6 @@ namespace Statikbe\PuppeteerPdfConverter\Exceptions;
 /**
  * If the Puppeteer library times out, this exception is thrown.
  * Class TimeoutException
- * @package Statikbe\PuppeteerPdfConverter\Exceptions
  */
 class TimeoutException extends PdfApiException
 {

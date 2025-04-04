@@ -8,7 +8,7 @@ use Statikbe\PuppeteerPdfConverter\PdfMerger;
 
 class PdfMergerTest extends TestCase
 {
-    public function testMergePdfUrls()
+    public function test_merge_pdf_urls()
     {
         self::assertNotNull(config('puppeteer-pdf-converter.pdf_merger_api'));
 
@@ -17,7 +17,7 @@ class PdfMergerTest extends TestCase
             '*' => Http::response(['url' => 'http://fake-url.com/merged.pdf'], 200),
         ]);
 
-        $pdfMerger = new PdfMerger();
+        $pdfMerger = new PdfMerger;
 
         $urls = [
             'http://fake-url.com/pdf1.pdf',

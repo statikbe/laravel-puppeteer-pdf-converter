@@ -7,10 +7,7 @@ namespace Statikbe\PuppeteerPdfConverter\Exceptions;
  * this exception is thrown.
  *
  * Class UnsuccessfulHttpResponseException
- * @package Statikbe\PuppeteerPdfConverter\Exceptions
  */
-
-
 class UnsuccessfulHttpResponseException extends PdfApiException
 {
     public const API_ERROR_TYPE = 'UNSUCCESSFUL_HTTP_RESPONSE';
@@ -29,7 +26,6 @@ class UnsuccessfulHttpResponseException extends PdfApiException
 
     /**
      * Returns the HTTP status code that was returned by the webpage url that was requested to be converted.
-     * @return int
      */
     public function getWebsiteStatusCode(): int
     {

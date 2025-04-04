@@ -4,8 +4,6 @@ namespace Statikbe\PuppeteerPdfConverter\Exceptions;
 
 /**
  * Thrown when the input PDFs cannot be retrieved.
- *
- * @package Statikbe\PuppeteerPdfConverter\Exceptions
  */
 class PdfFetchException extends PdfApiException
 {

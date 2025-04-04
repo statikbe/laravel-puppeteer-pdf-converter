@@ -1,4 +1,5 @@
 <?php
+
 // config for statikbe/laravel-puppeteer-pdf-converter
 return [
     /*

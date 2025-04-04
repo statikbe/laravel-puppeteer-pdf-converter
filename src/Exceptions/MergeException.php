@@ -4,8 +4,6 @@ namespace Statikbe\PuppeteerPdfConverter\Exceptions;
 
 /**
  * Thrown when the PDF merge library used by the AWS Lambda returns an error.
- *
- * @package Statikbe\PuppeteerPdfConverter\Exceptions
  */
 class MergeException extends PdfApiException
 {

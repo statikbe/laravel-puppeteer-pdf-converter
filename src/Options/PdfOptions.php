@@ -41,7 +41,7 @@ class PdfOptions
 
     public function __construct()
     {
-        //set default the configuration PDF options and allow override with setters.
+        // set default the configuration PDF options and allow override with setters.
         $this->setPdfOptionsFromConfig();
     }
 
@@ -58,7 +58,7 @@ class PdfOptions
 
     /**
      * Adds a configuration if it exists, to the PDF options array for the API.
-     * @param string $configKey
+     *
      * @return int|string|null
      */
     private function getPdfOptionFromConfig(string $configKey)
@@ -99,7 +99,6 @@ class PdfOptions
 
     /**
      * Returns the PDF option in an array formatted as query strings for the API.
-     * @return array
      */
     public function getApiPdfOptions(): array
     {
@@ -129,20 +128,13 @@ class PdfOptions
         return $options;
     }
 
-    //GETTERS & SETTERS:
+    // GETTERS & SETTERS:
 
-    /**
-     * @return int
-     */
     public function getWidth(): int
     {
         return $this->width;
     }
 
-    /**
-     * @param int $width
-     * @return PdfOptions
-     */
     public function setWidth(int $width): self
     {
         $this->width = $width;
@@ -150,18 +142,11 @@ class PdfOptions
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getHeight(): int
     {
         return $this->height;
     }
 
-    /**
-     * @param int $height
-     * @return PdfOptions
-     */
     public function setHeight(int $height): self
     {
         $this->height = $height;
@@ -169,18 +154,11 @@ class PdfOptions
         return $this;
     }
 
-    /**
-     * @return float
-     */
     public function getScale(): float
     {
         return $this->scale;
     }
 
-    /**
-     * @param float $scale
-     * @return PdfOptions
-     */
     public function setScale(float $scale): self
     {
         $this->scale = $scale;
@@ -190,7 +168,7 @@ class PdfOptions
 
     /**
      * Sets all page margins at once.
-     * @param PdfPageMargin $pageMargin
+     *
      * @return $this
      */
     public function setPageMargins(PdfPageMargin $pageMargin): self
@@ -203,18 +181,11 @@ class PdfOptions
         return $this;
     }
 
-    /**
-     * @return PdfPageMargin
-     */
     public function getPageMarginTop(): PdfPageMargin
     {
         return $this->pageMarginTop;
     }
 
-    /**
-     * @param PdfPageMargin $pageMarginTop
-     * @return PdfOptions
-     */
     public function setPageMarginTop(PdfPageMargin $pageMarginTop): self
     {
         $this->pageMarginTop = $pageMarginTop;
@@ -222,18 +193,11 @@ class PdfOptions
         return $this;
     }
 
-    /**
-     * @return PdfPageMargin
-     */
     public function getPageMarginBottom(): PdfPageMargin
     {
         return $this->pageMarginBottom;
     }
 
-    /**
-     * @param PdfPageMargin $pageMarginBottom
-     * @return PdfOptions
-     */
     public function setPageMarginBottom(PdfPageMargin $pageMarginBottom): self
     {
         $this->pageMarginBottom = $pageMarginBottom;
@@ -241,18 +205,11 @@ class PdfOptions
         return $this;
     }
 
-    /**
-     * @return PdfPageMargin
-     */
     public function getPageMarginLeft(): PdfPageMargin
     {
         return $this->pageMarginLeft;
     }
 
-    /**
-     * @param PdfPageMargin $pageMarginLeft
-     * @return PdfOptions
-     */
     public function setPageMarginLeft(PdfPageMargin $pageMarginLeft): self
     {
         $this->pageMarginLeft = $pageMarginLeft;
@@ -260,18 +217,11 @@ class PdfOptions
         return $this;
     }
 
-    /**
-     * @return PdfPageMargin
-     */
     public function getPageMarginRight(): PdfPageMargin
     {
         return $this->pageMarginRight;
     }
 
-    /**
-     * @param PdfPageMargin $pageMarginRight
-     * @return PdfOptions
-     */
     public function setPageMarginRight(PdfPageMargin $pageMarginRight): self
     {
         $this->pageMarginRight = $pageMarginRight;

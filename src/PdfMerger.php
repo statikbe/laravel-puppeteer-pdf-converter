@@ -2,13 +2,13 @@
 
 namespace Statikbe\PuppeteerPdfConverter;
 
+use GuzzleHttp\Exception\RequestException;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Statikbe\PuppeteerPdfConverter\Enum\MergerOutput;
-use GuzzleHttp\Exception\RequestException;
-use Illuminate\Http\Response;
 use Statikbe\PuppeteerPdfConverter\Exceptions\InputValidationException;
 use Statikbe\PuppeteerPdfConverter\Exceptions\MergeException;
 use Statikbe\PuppeteerPdfConverter\Exceptions\PdfApiException;
@@ -23,16 +23,15 @@ class PdfMerger
 {
     /**
      * Merge a list of urls into 1 PDF file.
-     * @param string[] $urls
-     * @param MergerOutput $outputFormat
-     * @param string|null $outputFileName
-     * @return string|Response
+     *
+     * @param  string[]  $urls
+     *
      * @throws InputValidationException
      * @throws MergeException
      * @throws PdfApiException
      * @throws PdfFetchException
      */
-    public function mergePdfUrls(array $urls, MergerOutput $outputFormat = MergerOutput::URL, string $outputFileName = null): string|Response
+    public function mergePdfUrls(array $urls, MergerOutput $outputFormat = MergerOutput::URL, ?string $outputFileName = null): string|Response
     {
         $body = [
             'fileUris' => $urls,
@@ -44,16 +43,15 @@ class PdfMerger
 
     /**
      * Merge a list of binary base64 strings into 1 PDF.
-     * @param string[] $filePaths
-     * @param MergerOutput $outputFormat
-     * @param string|null $outputFileName
-     * @return string|Response
+     *
+     * @param  string[]  $filePaths
+     *
      * @throws InputValidationException
      * @throws MergeException
      * @throws PdfApiException
      * @throws PdfFetchException
      */
-    public function mergePdfFiles(array $filePaths, MergerOutput $outputFormat = MergerOutput::URL, string $outputFileName = null): string|Response
+    public function mergePdfFiles(array $filePaths, MergerOutput $outputFormat = MergerOutput::URL, ?string $outputFileName = null): string|Response
     {
         $body = [
             'fileBinaries' => collect($filePaths)
@@ -77,9 +75,6 @@ class PdfMerger
     }
 
     /**
-     * @param array $body
-     * @param MergerOutput $outputFormat
-     * @return string|Response
      * @throws PdfApiException|MergeException|InputValidationException|PdfFetchException
      */
     private function sendMergeRequest(array $body, MergerOutput $outputFormat): string|Response
@@ -89,9 +84,9 @@ class PdfMerger
 
         try {
             $response = Http::withHeaders([
-                    'Content-Type' => 'application/json',
-                    'x-api-key' => $apiKey,
-                ])
+                'Content-Type' => 'application/json',
+                'x-api-key' => $apiKey,
+            ])
                 ->post($url, $body);
 
             switch ($outputFormat) {
@@ -100,6 +95,7 @@ class PdfMerger
                 case MergerOutput::BASE64:
                 default:
                     $resource = (string) $response->getBody();
+
                     return new Response($resource, 200, ['Content-Type' => 'application/pdf']);
             }
         } catch (RequestException $e) {
@@ -117,15 +113,14 @@ class PdfMerger
 
             // Rethrow the original exception if the response doesn't have the error details we need
             throw new PdfApiException($e->getMessage(), previous: $e);
-        }
-        catch(ConnectionException $e) {
+        } catch (ConnectionException $e) {
             throw new PdfApiException($e->getMessage(), previous: $e);
         }
     }
 
     private function createException(mixed $error): PdfApiException
     {
-        return match($error['type']) {
+        return match ($error['type']) {
             InputValidationException::API_ERROR_TYPE => InputValidationException::create($error),
             MergeException::API_ERROR_TYPE => MergeException::create($error),
             PdfFetchException::API_ERROR_TYPE => PdfFetchException::create($error),
