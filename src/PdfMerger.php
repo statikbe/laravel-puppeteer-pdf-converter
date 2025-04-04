@@ -2,14 +2,17 @@
 
 namespace Statikbe\PuppeteerPdfConverter;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Statikbe\PuppeteerPdfConverter\Enum\MergerOutput;
-use GuzzleHttp\Psr7\StreamWrapper;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Http\Response;
+use Statikbe\PuppeteerPdfConverter\Exceptions\InputValidationException;
+use Statikbe\PuppeteerPdfConverter\Exceptions\MergeException;
 use Statikbe\PuppeteerPdfConverter\Exceptions\PdfApiException;
+use Statikbe\PuppeteerPdfConverter\Exceptions\PdfFetchException;
 
 /**
  * A wrapper around an AWS Lambda to merge multiple PDFs into one PDF.
@@ -21,6 +24,13 @@ class PdfMerger
     /**
      * Merge a list of urls into 1 PDF file.
      * @param string[] $urls
+     * @param MergerOutput $outputFormat
+     * @param string|null $outputFileName
+     * @return string|Response
+     * @throws InputValidationException
+     * @throws MergeException
+     * @throws PdfApiException
+     * @throws PdfFetchException
      */
     public function mergePdfUrls(array $urls, MergerOutput $outputFormat = MergerOutput::URL, string $outputFileName = null): string|Response
     {
@@ -35,6 +45,13 @@ class PdfMerger
     /**
      * Merge a list of binary base64 strings into 1 PDF.
      * @param string[] $filePaths
+     * @param MergerOutput $outputFormat
+     * @param string|null $outputFileName
+     * @return string|Response
+     * @throws InputValidationException
+     * @throws MergeException
+     * @throws PdfApiException
+     * @throws PdfFetchException
      */
     public function mergePdfFiles(array $filePaths, MergerOutput $outputFormat = MergerOutput::URL, string $outputFileName = null): string|Response
     {
@@ -59,6 +76,12 @@ class PdfMerger
         }
     }
 
+    /**
+     * @param array $body
+     * @param MergerOutput $outputFormat
+     * @return string|Response
+     * @throws PdfApiException|MergeException|InputValidationException|PdfFetchException
+     */
     private function sendMergeRequest(array $body, MergerOutput $outputFormat): string|Response
     {
         $url = Config::string('puppeteer-pdf-converter.pdf_merger_api');
@@ -76,10 +99,8 @@ class PdfMerger
                     return json_decode($response->getBody(), true)['url'];
                 case MergerOutput::BASE64:
                 default:
-                    $resource = fopen('php://temp', 'r+');
-                    fwrite($resource, base64_decode((string)$response->getBody()));
-                    rewind($resource);
-                    return new Response(StreamWrapper::getResource($resource), 200, ['Content-Type' => 'application/pdf']);
+                    $resource = (string) $response->getBody();
+                    return new Response($resource, 200, ['Content-Type' => 'application/pdf']);
             }
         } catch (RequestException $e) {
             if ($e->hasResponse()) {
@@ -89,11 +110,24 @@ class PdfMerger
                     // Log error details for debugging
                     Log::error($error);
                     // Throw exception with error details
-                    throw new PdfApiException('Error from AWS Lambda: ' . $error['title']);
+                    throw $this->createException($error);
                 }
             }
             // Rethrow the original exception if the response doesn't have the error details we need
-            throw $e;
+            throw new PdfApiException($e->getMessage(), previous: $e);
         }
+        catch(ConnectionException $e) {
+            throw new PdfApiException($e->getMessage(), previous: $e);
+        }
+    }
+
+    private function createException(mixed $error): PdfApiException
+    {
+        return match($error['type']) {
+            InputValidationException::API_ERROR_TYPE => InputValidationException::create($error),
+            MergeException::API_ERROR_TYPE => MergeException::create($error),
+            PdfFetchException::API_ERROR_TYPE => PdfFetchException::create($error),
+            default => PdfApiException::create($error),
+        };
     }
 }
