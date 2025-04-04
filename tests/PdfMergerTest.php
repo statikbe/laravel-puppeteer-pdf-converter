@@ -3,8 +3,8 @@
 namespace Statikbe\PuppeteerPdfConverter\Tests;
 
 use Illuminate\Support\Facades\Http;
-use Statikbe\PuppeteerPdfConverter\PdfMerger;
 use Statikbe\PuppeteerPdfConverter\Enum\MergerOutput;
+use Statikbe\PuppeteerPdfConverter\PdfMerger;
 
 class PdfMergerTest extends TestCase
 {
@@ -14,7 +14,7 @@ class PdfMergerTest extends TestCase
 
         // Mocking successful HTTP request
         Http::fake([
-            '*' => Http::response(['url' => 'http://fake-url.com/merged.pdf'], 200)
+            '*' => Http::response(['url' => 'http://fake-url.com/merged.pdf'], 200),
         ]);
 
         $pdfMerger = new PdfMerger();

@@ -57,7 +57,7 @@ class PdfMerger
     {
         $body = [
             'fileBinaries' => collect($filePaths)
-                ->map(fn($filePath) => base64_encode(file_get_contents($filePath)))
+                ->map(fn ($filePath) => base64_encode(file_get_contents($filePath)))
                 ->toArray(),
         ];
         $this->addOutputToBody($body, $outputFormat, $outputFileName);
@@ -71,7 +71,7 @@ class PdfMerger
             'variant' => $outputFormat->value,
         ];
 
-        if($outputFileName && $outputFormat === MergerOutput::URL){
+        if ($outputFileName && $outputFormat === MergerOutput::URL) {
             $body['output']['fileName'] = $outputFileName;
         }
     }
@@ -90,7 +90,7 @@ class PdfMerger
         try {
             $response = Http::withHeaders([
                     'Content-Type' => 'application/json',
-                    'x-api-key' => $apiKey
+                    'x-api-key' => $apiKey,
                 ])
                 ->post($url, $body);
 
@@ -109,10 +109,12 @@ class PdfMerger
                     $error = json_decode($response->getBody(), true);
                     // Log error details for debugging
                     Log::error($error);
+
                     // Throw exception with error details
                     throw $this->createException($error);
                 }
             }
+
             // Rethrow the original exception if the response doesn't have the error details we need
             throw new PdfApiException($e->getMessage(), previous: $e);
         }
