@@ -83,8 +83,8 @@ class PuppeteerPdfConverter
 
         Log::info("Converting website url {$url} with lambda {$pdfConversionApiUrl}");
 
-        $response = Http::get($pdfConversionApiUrl)
-            ->timeout(config('puppeteer-pdf-converter.http_timeout', 60));
+        $response = Http::timeout(config('puppeteer-pdf-converter.http_timeout', 60))
+            ->get($pdfConversionApiUrl);
 
         // if the request is successfull return the url to the PDF.
         if ($response->successful()) {
