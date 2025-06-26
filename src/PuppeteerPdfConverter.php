@@ -3,6 +3,7 @@
 namespace Statikbe\PuppeteerPdfConverter;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 use Statikbe\PuppeteerPdfConverter\Exceptions\ConfigurationException;
 use Statikbe\PuppeteerPdfConverter\Exceptions\ConversionException;
@@ -80,9 +81,11 @@ class PuppeteerPdfConverter
         }
         $pdfConversionApiUrl .= '?'.http_build_query($queryStringArgs);
 
+        Log::info("Converting website url {$url} with lambda {$pdfConversionApiUrl}");
+
         $response = Http::get($pdfConversionApiUrl);
 
-        // if the request is successful return the url to the PDF.
+        // if the request is successfull return the url to the PDF.
         if ($response->successful()) {
             return $response->json('url');
         }
