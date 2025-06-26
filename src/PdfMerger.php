@@ -87,6 +87,7 @@ class PdfMerger
                 'Content-Type' => 'application/json',
                 'x-api-key' => $apiKey,
             ])
+                ->timeout(config('puppeteer-pdf-converter.http_timeout', 60))
                 ->post($url, $body);
 
             switch ($outputFormat) {

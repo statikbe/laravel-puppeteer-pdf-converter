@@ -64,4 +64,9 @@ return [
      * The API key for the AWS Lambda API to merge multiple PDFs to one PDF.
      */
     'pdf_merger_api_key' => env('PDF_MERGER_API_KEY'),
+
+    /*
+     *  The HTTP timeout for the AWS lambda calls.
+     */
+    'http_timeout' => 60,
 ];
