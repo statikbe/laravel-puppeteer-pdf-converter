@@ -84,6 +84,7 @@ class PdfMerger
         $apiKey = Config::string('puppeteer-pdf-converter.pdf_merger_api_key');
 
         try {
+            Log::info('Sending PDF merge request to API: ' . $url);
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
                 'x-api-key' => $apiKey,
