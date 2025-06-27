@@ -91,7 +91,7 @@ class PdfMerger
                 ->timeout(config('puppeteer-pdf-converter.http_timeout', 60))
                 ->post($url, $body);
 
-            if($response->failed()) {
+            if ($response->failed()) {
                 $this->createError($response);
             }
 
