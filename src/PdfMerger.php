@@ -3,6 +3,7 @@
 namespace Statikbe\PuppeteerPdfConverter;
 
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Promise\PromiseInterface;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Config;
@@ -90,6 +91,10 @@ class PdfMerger
                 ->timeout(config('puppeteer-pdf-converter.http_timeout', 60))
                 ->post($url, $body);
 
+            if($response->failed()) {
+                $this->createError($response);
+            }
+
             switch ($outputFormat) {
                 case MergerOutput::URL:
                     return json_decode($response->getBody(), true)['url'];
@@ -102,14 +107,7 @@ class PdfMerger
         } catch (RequestException $e) {
             if ($e->hasResponse()) {
                 $response = $e->getResponse();
-                if ($response->getStatusCode() >= 400 && $response->getStatusCode() < 600) {
-                    $error = json_decode($response->getBody(), true);
-                    // Log error details for debugging
-                    Log::error($error);
-
-                    // Throw exception with error details
-                    throw $this->createException($error);
-                }
+                $this->createError($response);
             }
 
             // Rethrow the original exception if the response doesn't have the error details we need
@@ -127,5 +125,22 @@ class PdfMerger
             PdfFetchException::API_ERROR_TYPE => PdfFetchException::create($error),
             default => PdfApiException::create($error),
         };
+    }
+
+    /**
+     * @param PromiseInterface|\Illuminate\Http\Client\Response|\Psr\Http\Message\ResponseInterface|null $response
+     * @return void
+     * @throws PdfApiException
+     */
+    private function createError($response)
+    {
+        if ($response->getStatusCode() >= 400 && $response->getStatusCode() < 600) {
+            $error = json_decode($response->getBody(), true);
+            // Log error details for debugging
+            Log::error($error);
+
+            // Throw exception with error details
+            throw $this->createException($error);
+        }
     }
 }
