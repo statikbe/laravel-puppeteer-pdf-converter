@@ -98,6 +98,7 @@ class PdfMerger
             switch ($outputFormat) {
                 case MergerOutput::URL:
                     Log::info('API JSON response: ' . $response->getBody());
+
                     return json_decode($response->getBody(), true)['url'];
                 case MergerOutput::BASE64:
                 default:
