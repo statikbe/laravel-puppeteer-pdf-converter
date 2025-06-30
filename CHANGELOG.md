@@ -2,6 +2,10 @@
 
 All notable changes to `statikbe/laravel-puppeteer-pdf-converter` will be documented in this file.
 
+## v1.3.1 - 2025-06-30
+
+Improve error handling
+
 ## v1.3.0 - 2025-04-04
 
 PDF merge functionality with support for PDF layers (links, annotations, etc).
