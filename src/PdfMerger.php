@@ -122,7 +122,8 @@ class PdfMerger
 
     private function createException(mixed $error): PdfApiException
     {
-        return match ($error['type']) {
+        $errorType = $error['type'] ?? null;
+        return match ($errorType) {
             InputValidationException::API_ERROR_TYPE => InputValidationException::create($error),
             MergeException::API_ERROR_TYPE => MergeException::create($error),
             PdfFetchException::API_ERROR_TYPE => PdfFetchException::create($error),
