@@ -3,9 +3,10 @@
 namespace Statikbe\PuppeteerPdfConverter;
 
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Promise\PromiseInterface;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\Response as ClientResponse;
 use Illuminate\Http\Response;
+use Psr\Http\Message\ResponseInterface;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -98,12 +99,12 @@ class PdfMerger
 
             switch ($outputFormat) {
                 case MergerOutput::URL:
-                    Log::info('API JSON response: ' . $response->getBody());
+                    Log::info('API JSON response: ' . $response->body());
 
-                    return json_decode($response->getBody(), true)['url'];
+                    return $response->json('url');
                 case MergerOutput::BASE64:
                 default:
-                    $resource = (string) $response->getBody();
+                    $resource = $response->body();
 
                     return new Response($resource, 200, ['Content-Type' => 'application/pdf']);
             }
@@ -133,18 +134,20 @@ class PdfMerger
     }
 
     /**
-     * @param PromiseInterface|\Illuminate\Http\Client\Response|\Psr\Http\Message\ResponseInterface|null $response
-     * @return void
      * @throws PdfApiException
      */
-    private function createError($response)
+    private function createError(ClientResponse|ResponseInterface $response): void
     {
-        if ($response->getStatusCode() >= 400 && $response->getStatusCode() < 600) {
-            $error = json_decode($response->getBody(), true);
-            // Log error details for debugging
+        $statusCode = $response instanceof ClientResponse
+            ? $response->status()
+            : $response->getStatusCode();
+
+        if ($statusCode >= 400 && $statusCode < 600) {
+            $error = $response instanceof ClientResponse
+                ? $response->json()
+                : json_decode((string) $response->getBody(), true);
             Log::error($error);
 
-            // Throw exception with error details
             throw $this->createException($error);
         }
     }
