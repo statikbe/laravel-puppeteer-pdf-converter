@@ -2,6 +2,23 @@
 
 All notable changes to `statikbe/laravel-puppeteer-pdf-converter` will be documented in this file.
 
+## v1.4.0 - 2026-04-07
+
+### What's Changed
+
+* Add Laravel 13 compatibility by @vanneszias in https://github.com/statikbe/laravel-puppeteer-pdf-converter/pull/25
+* Bump dependabot/fetch-metadata from 2.4.0 to 2.5.0 by @dependabot[bot] in https://github.com/statikbe/laravel-puppeteer-pdf-converter/pull/22
+* Bump ramsey/composer-install from 3 to 4 by @dependabot[bot] in https://github.com/statikbe/laravel-puppeteer-pdf-converter/pull/23
+* Bump actions/checkout from 4 to 6 by @dependabot[bot] in https://github.com/statikbe/laravel-puppeteer-pdf-converter/pull/21
+* Bump stefanzweifel/git-auto-commit-action from 5 to 7 by @dependabot[bot] in https://github.com/statikbe/laravel-puppeteer-pdf-converter/pull/20
+* Bump dependabot/fetch-metadata from 2.5.0 to 3.0.0 by @dependabot[bot] in https://github.com/statikbe/laravel-puppeteer-pdf-converter/pull/24
+
+### New Contributors
+
+* @vanneszias made their first contribution in https://github.com/statikbe/laravel-puppeteer-pdf-converter/pull/25
+
+**Full Changelog**: https://github.com/statikbe/laravel-puppeteer-pdf-converter/compare/v1.3.1...v1.4.0
+
 ## v1.3.1 - 2025-06-30
 
 Improve error handling
